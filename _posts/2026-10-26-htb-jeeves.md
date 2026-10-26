@@ -319,7 +319,7 @@ C:\Windows\WinSxS\msil_microsoft.windows.d..updatediagrootcause_31bf3856ad364e35
 Sadly, no files are true !!!!.<br>
 Just when it seemed all hope was lost, I suddenly remembered a time in the past when I was pentesting an upload feature and reading payloads on PayloadAllTheThings. I recalled a payload related to something called Alternate Data Stream (ADS) on Windows. Why don't I try it on this lab?
 
-![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-56.png){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_11-56.png){: w="700" }
 
 ```
 C:\Users\Administrator\Desktop>dir /R
