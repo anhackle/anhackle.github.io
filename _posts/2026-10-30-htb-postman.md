@@ -73,6 +73,20 @@ OK
 10.85.0.52:6379> save
 OK
 ```
+Okey, before we continue, we need to understand behind the scence of above instruction<br>
+
+Redis is commonly deployed as an in-memory cache, but it also supports on-disk persistence through RDB snapshots. If an attacker can reach an unauthenticated Redis instance, they can abuse this persistence mechanism to write arbitrary files on the server. A well-known exploitation path is to write an attacker-controlled SSH public key into a user's ~/.ssh/authorized_keys file, granting SSH access without a password.<br>
+The attack works because Redis allows its persistence settings to be changed at runtime:
+
+```CONFIG SET dir <path>``` changes the directory where Redis writes its snapshot.
+
+```CONFIG SET dbfilename <name>``` changes the snapshot filename.<br>
+
+By pointing these settings at a user's .ssh directory and naming the file authorized_keys, the attacker can make Redis write its RDB snapshot directly into the SSH authorization file<br>
+
+The SET command stores the public key inside Redis. The surrounding newlines are important: when Redis writes the RDB snapshot, the public key may be embedded among binary RDB data. SSH reads authorized_keys line by line and ignores invalid lines, so the newlines help isolate the public key on its own valid line.
+
+After SAVE, Redis writes the snapshot to the specified path. If the target user's .ssh directory exists and the Redis process has write permission to it, the public key is now present in authorized_keys. The attacker can then log in over SSH using the corresponding private key.
 ## P3 & P4 part 1
 Good, we firstly have a initial shell:
 ```
@@ -159,7 +173,9 @@ Matt@Postman:~$ cat user.txt
 Now I continue using my own tool as well as **linpeas.sh** to find out any interesting things but both fail. So again, whenever we stuck, back to recon and enumeration :D<br>
 
 ## P1 & P2
-We have not touch to **port 10000**, let's do some basic enumeration on it. By nmap, we know that the service running on port 10000 is **MiniServ 1.910 (Webmin httpd)**. Try to search on Google (and some AI as well :D), I find out a promising CVE and its PoC on github. It's **CVE-2019-12840**
+We have not touch to **port 10000**, let's do some basic enumeration on it. By nmap, we know that the service running on port 10000 is **MiniServ 1.910 (Webmin httpd)**. Try to search on Google (and some AI as well :D), I find out a promising CVE and its PoC on github. It's **CVE-2019-12840**<br>
+
+This CVE is easy to understand. It's just a **post request** which has a parameter **u** which is vulnerable for command injection. In addition to, the backend of that website is running as root (it needs root to update os packages). So we can abuse it to achive root privilege.
 
 ## P3 & P4 part 2
 First of all, I will prepare a listener on my attack machine:
