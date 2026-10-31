@@ -77,23 +77,6 @@ OK
 Good, we firstly have a initial shell:
 ```
 └─$ ssh -i id_rsa redis@10.129.64.73
-** WARNING: connection is not using a post-quantum key exchange algorithm.
-** This session may be vulnerable to "store now, decrypt later" attacks.
-** The server may need to be upgraded. See https://openssh.com/pq.html
-Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-58-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-
- * Canonical Livepatch is available for installation.
-   - Reduce system reboots and improve kernel security. Activate at:
-     https://ubuntu.com/livepatch
-Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
-
-Last login: Sat Oct 31 01:04:04 2026 from 10.10.15.107
-redis@Postman:~$
 ```
 Next, I continue using my own tool to search any things in the target machine which can help me to privilege escalate. Actually, **Postman** machine is also vulnerable with **CVE-2026-31431** but now we just ignore it :). In addition to, I find out an interesting file:
 
@@ -173,8 +156,8 @@ We find out the first flag:
 ```
 Matt@Postman:~$ cat user.txt
 ```
-
 Now I continue using my own tool as well as **linpeas.sh** to find out any interesting things but both fail. So again, whenever we stuck, back to recon and enumeration :D<br>
+
 ## P1 & P2
 We have not touch to **port 10000**, let's do some basic enumeration on it. By nmap, we know that the service running on port 10000 is **MiniServ 1.910 (Webmin httpd)**. Try to search on Google (and some AI as well :D), I find out a promising CVE and its PoC on github. It's **CVE-2019-12840**
 
