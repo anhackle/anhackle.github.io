@@ -464,8 +464,11 @@ ESC15 is like making a fake ID.
 Schema V1 lets you print the "VIP Access" hologram (Smuggled EKU) on the back of the card.
 
 Enrollee Supplies Subject lets you write "Administrator" as the name on the front of the card.
-You need both to get past the bouncer (Kerberos/LDAPS). If you only print the hologram but your real name is still on the card, you aren't getting into the VIP lounge.
-Okey first of all, we will create a certificate which having **application-policy** is **Certificate Request Agent**. *In a normal corporate environment, there are scenarios where an employee needs a certificate (like a Smart Card for physical access), but they cannot request it themselves. They might be a new hire, they might not have network access yet, or they are a kiosk device.*
+You need both to get past the bouncer (Kerberos/LDAPS). If you only print the hologram but your real name is still on the card, you aren't getting into the VIP lounge.<br>
+
+Okey first of all, we will create a certificate which having **application-policy** is **Certificate Request Agent**. But what is **Certificate Request Agent**?<br>
+
+*In a normal corporate environment, there are scenarios where an employee needs a certificate (like a Smart Card for physical access), but they cannot request it themselves. They might be a new hire, they might not have network access yet, or they are a kiosk device.*
 
 *To solve this, Microsoft created the Enrollment Agent. A trusted IT administrator gets a "Certificate Request Agent" certificate. They can then use this special certificate to go to the CA and say: "Hello, I am a trusted Agent. I am requesting a Smart Card certificate on behalf of John Doe." The CA verifies the Agent's certificate, sees it's valid, and issues the certificate to John Doe.*
 ```
