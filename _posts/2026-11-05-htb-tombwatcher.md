@@ -1,6 +1,6 @@
 ---
 title: "HTB - TombWatcher Writeup"
-date: 2026-10-31 17:00:00 +0700
+date: 2026-11-07 17:00:00 +0700
 categories: [HackTheBox, Machines]
 tags: [windows, medium]
 ---
