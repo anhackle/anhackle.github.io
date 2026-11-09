@@ -42,7 +42,8 @@ PS C:\users\sfitz> Invoke-ConPtyShell -Upgrade -Rows 39 -Cols 189
 
 Have not done yet :D.<br>
 
-**On the target**, press `Ctrl + Z`. Then run below command directly in the terminal we are working on:
+**O
+n the target**, press `Ctrl + Z`. Then run below command directly in the terminal we are working on:
 ```
 stty raw -echo; fg
 ```
