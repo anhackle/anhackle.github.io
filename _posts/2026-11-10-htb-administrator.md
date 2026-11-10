@@ -97,10 +97,8 @@ HOP RTT      ADDRESS
 OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 76.02 seconds
 ```
-## P1
-```
-```
-## P2
+
+## P3 & P4
 *As is common in real life Windows pentests, you will start the Administrator box with credentials for the following account: Username: Olivia Password: ichliebedich*.<br>
 
 So I will directly use above credentials with **evil-winrm**
