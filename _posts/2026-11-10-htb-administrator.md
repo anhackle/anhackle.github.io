@@ -1,5 +1,5 @@
 ---
-title: "HTB - TombWatcher Writeup"
+title: "HTB - Administrator Writeup"
 date: 2026-11-10 08:34:00 +0700
 categories: [HackTheBox, Machines]
 tags: [windows, medium]
