@@ -270,9 +270,9 @@ Both combinations return `Guest`, which means they are not valid accounts; conse
 
 At this point, there is nothing left for us to continue with. I'm stucking right now. So I come back the enumeration and recon again, specifically is nmap result. And I detect that there is a strange port `8443`. This is a http service, we can access it by a browser:
 
-![Upgrade_Notice.pdf](assets/image/htb/authority/2026-11-15-16.png){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/authority/2026-11-15_15-16.png){: w="700" }
 
-![Upgrade_Notice.pdf](assets/image/htb/authority/2026-11-15-17.png){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/authority/2026-11-15_15-17.png){: w="700" }
 
 This is **Open Source PWM (Password Manager)** which maybe has been set up by `ansible` which we have found in above public share `Development`<br>
 
