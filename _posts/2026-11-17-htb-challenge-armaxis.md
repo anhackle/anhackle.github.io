@@ -56,6 +56,8 @@ We continue to more deeply dive in the source code, especially is the code which
 
 Fastly checking `challenge/markdown.js` file, I realize that this function uses this regex `/\!\[.*?\]\((.*?)\)/g` to match Markdown image syntax `![alt text](image URL)` and captures the URL portion (the first capture group). After find out the image URL, it will put it as a input for `execSync` function. So now, maybe all of you know what to do right now, `command injection` by **abusing url of a image after image syntax in Markdown**.
 
+![Upgrade_Notice.pdf](assets/image/htb-challenges/armaxis/2026-11-17_10-58.png){: w="700" }
+
 ![Upgrade_Notice.pdf](assets/image/htb-challenges/armaxis/2026-11-17_11-02.png){: w="700" }
 
 ![Upgrade_Notice.pdf](assets/image/htb-challenges/armaxis/2026-11-17_11-03.png){: w="700" }
