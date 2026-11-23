@@ -341,7 +341,7 @@ bloodyAD --host 10.129.232.167 -d tombwatcher.htb -u 'sam' -p 'NewPassword123!' 
 ```
 It takes me too much time to watch and read and findout **Restore-AdObject** method:
 ```
-*Evil-WinRM* PS C:\Users\john\Documents> Restore-ADObject -Identity S-1-5-21-1392491010-1358638721-2126982587-1111
+*Evil-WinRM* PS C:\Users\john\Documents> Restore-ADObject -Identity 1c6b1deb-c372-4cbb-87b1-15031de169db
 ```
 After restoring it, I will change its password for easily to use:
 ```
