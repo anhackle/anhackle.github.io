@@ -4,6 +4,7 @@ date: 2026-11-20 09:22:00 +0700
 categories: [HackTheBox, Machines]
 tags: [windows, medium]
 ---
+Voleur is a medium-difficulty Windows machine designed around an assumed breach scenario, where the attacker is provided with low-privileged user credentials. The machine features an Active Directory environment, and NTLM authentication is disabled. After Kerberos configuration and network enumeration, a password-protected Excel file is found on an exposed SMB share. We extract its password hash, crack it to recover the password, and use that password to access the spreadsheet. Enumeration reveals a service account with WriteSPN rights, which enables a targeted Kerberoasting attack that recovers credentials and grants remote access to the host. A previously deleted domain user is restored using group privileges, and a DPAPI-protected credential blob is recovered, which is decrypted with the user’s password to reveal a higher-privilege account. These credentials lead to discovering an SSH private key for a backup service account, allowing access to a Linux subsystem over a nonstandard port. From this, the NTDS.dit, SYSTEM, and SECURITY backup files are extracted and used to recover the Administrator's NT hash, ultimately allowing access as the Administrator.
 ## P0
 First of all, we will use rustscan to find out all opened ports of this machine:
 ```
